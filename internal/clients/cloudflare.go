@@ -15,7 +15,7 @@ import (
 
 	"github.com/crossplane/upjet/pkg/terraform"
 
-	"github.com/upbound/upjet-provider-template/apis/v1beta1"
+	"github.com/chezmoi-sh/provider-cloudflare/apis/v1beta1"
 )
 
 const (
@@ -24,7 +24,15 @@ const (
 	errGetProviderConfig    = "cannot get referenced ProviderConfig"
 	errTrackUsage           = "cannot track ProviderConfig usage"
 	errExtractCredentials   = "cannot extract credentials"
-	errUnmarshalCredentials = "cannot unmarshal template credentials as JSON"
+	errUnmarshalCredentials = "cannot unmarshal cloudflare credentials as JSON"
+
+	// configuration keys
+	keyApiKey = "api_key"
+	keyApiToken = "api_token"
+	keyApiUserServiceKey = "api_user_service_key"
+	keyBaseURL = "base_url"
+	keyEmail  = "email"
+	keyUserAgentOperatorSuffix = "user_agent_operator_suffix"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -63,10 +71,25 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		}
 
 		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		ps.Configuration = map[string]any{}
+		if apiKey, ok := creds[keyApiKey]; ok {
+			ps.Configuration[keyApiKey] = apiKey
+		}
+		if apiToken, ok := creds[keyApiToken]; ok {
+			ps.Configuration[keyApiToken] = apiToken
+		}
+		if apiUserServiceKey, ok := creds[keyApiUserServiceKey]; ok {
+			ps.Configuration[keyApiUserServiceKey] = apiUserServiceKey
+		}
+		if baseURL, ok := creds[keyBaseURL]; ok {
+			ps.Configuration[keyBaseURL] = baseURL
+		}
+		if email, ok := creds[keyEmail]; ok {
+			ps.Configuration[keyEmail] = email
+		}
+		if userAgentOperatorSuffix, ok := creds[keyUserAgentOperatorSuffix]; ok {
+			ps.Configuration[keyUserAgentOperatorSuffix] = userAgentOperatorSuffix
+		}
 		return ps, nil
 	}
 }

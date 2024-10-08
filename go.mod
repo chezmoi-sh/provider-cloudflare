@@ -1,4 +1,4 @@
-module github.com/upbound/upjet-provider-template
+module github.com/chezmoi-sh/provider-cloudflare
 
 go 1.21
 

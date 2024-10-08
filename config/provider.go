@@ -10,6 +10,7 @@ import (
 
 	ujconfig "github.com/crossplane/upjet/pkg/config"
 
+	"github.com/chezmoi-sh/provider-cloudflare/config/account"
 	"github.com/chezmoi-sh/provider-cloudflare/config/dns"
 	"github.com/chezmoi-sh/provider-cloudflare/config/zone"
 )
@@ -36,6 +37,7 @@ func GetProvider() *ujconfig.Provider {
 		))
 
 	for _, configure := range []func(provider *ujconfig.Provider){
+		account.Configure,
 		dns.Configure,
 		zone.Configure,
 	} {

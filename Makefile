@@ -234,9 +234,33 @@ schema-version-diff:
 .PHONY: cobertura submodules fallthrough run crds.clean
 
 # ====================================================================================
+# Custom Targets
+
+$(PROJECT_NAME): $(PROJECT_NAME).generate generate build
+
+$(PROJECT_NAME).generate:
+	@$(INFO) Generating Cloudflare resource definitions for v$(TERRAFORM_PROVIDER_VERSION)
+	@yq $(PROJECT_NAME).resources.yaml --output-format json \
+		| go run ./scripts/generate_provider_config.go -version $(TERRAFORM_PROVIDER_VERSION) -package $(TERRAFORM_PROVIDER_REPO)
+
+define PROVIDER_MAKE_HELP
+
+$(PROJECT_NAME) Targets:
+    $(PROJECT_NAME).generate   Generate $(PROJECT_NAME) resource definitions for v$(TERRAFORM_PROVIDER_VERSION)
+
+endef
+export PROVIDER_MAKE_HELP
+
+cloudflare.help:
+	@echo "$$PROVIDER_MAKE_HELP"
+
+.PHONY: $(PROJECT_NAME).generate $(PROJECT_NAME).help
+
+# ====================================================================================
 # Special Targets
 
 define CROSSPLANE_MAKE_HELP
+
 Crossplane Targets:
     cobertura             Generate a coverage report for cobertura applying exclusions on generated files.
     submodules            Update the submodules, such as the common build scripts.
@@ -250,7 +274,7 @@ export CROSSPLANE_MAKE_HELP
 crossplane.help:
 	@echo "$$CROSSPLANE_MAKE_HELP"
 
-help-special: crossplane.help
+help-special: crossplane.help cloudflare.help
 
 .PHONY: crossplane.help help-special
 

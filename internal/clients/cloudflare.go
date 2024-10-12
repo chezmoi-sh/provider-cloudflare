@@ -1,7 +1,6 @@
 /*
 Copyright 2021 Upbound Inc.
 */
-
 package clients
 
 import (
@@ -27,16 +26,18 @@ const (
 	errUnmarshalCredentials = "cannot unmarshal cloudflare credentials as JSON"
 
 	// configuration keys
-	keyApiKey = "api_key"
-	keyApiToken = "api_token"
-	keyApiUserServiceKey = "api_user_service_key"
-	keyBaseURL = "base_url"
-	keyEmail  = "email"
+	keyApiKey                  = "api_key"
+	keyApiToken                = "api_token"
+	keyApiUserServiceKey       = "api_user_service_key"
+	keyBaseURL                 = "base_url"
+	keyEmail                   = "email"
 	keyUserAgentOperatorSuffix = "user_agent_operator_suffix"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
 // returns Terraform provider setup configuration
+//
+//nolint:gocyclo
 func TerraformSetupBuilder(version, providerSource, providerVersion string) terraform.SetupFn {
 	return func(ctx context.Context, client client.Client, mg resource.Managed) (terraform.Setup, error) {
 		ps := terraform.Setup{

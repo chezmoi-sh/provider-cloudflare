@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: resources.null.cloudflare.upbound.io
+  name: dnssecs.dns.cloudflare.crossplane.io
 spec:
-  group: null.cloudflare.upbound.io
+  group: dns.cloudflare.crossplane.io
   names:
     categories:
     - crossplane
     - managed
     - cloudflare
-    kind: Resource
-    listKind: ResourceList
-    plural: resources
-    singular: resource
+    kind: DNSSEC
+    listKind: DNSSECList
+    plural: dnssecs
+    singular: dnssec
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,10 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Resource is the Schema for the Resources API. The null_resource
-          resource implements the standard resource lifecycle but takes no further
-          action.hashicorp. The triggers argument allows specifying an arbitrary set
-          of values that, when changed, will cause the resource to be replaced.
+        description: DNSSEC is the Schema for the DNSSECs API. Provides a Cloudflare
+          resource to create and modify zone DNSSEC settings.
         properties:
           apiVersion:
             description: |-
@@ -57,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ResourceSpec defines the desired state of Resource
+            description: DNSSECSpec defines the desired state of DNSSEC
             properties:
               deletionPolicy:
                 default: Delete
@@ -75,14 +73,90 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  triggers:
-                    additionalProperties:
-                      type: string
-                    description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
+                  id:
+                    description: Reference to a Zone in zone to populate zoneId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
                     type: object
-                    x-kubernetes-map-type: granular
+                  modifiedOn:
+                    description: |-
+                      (String) Zone DNSSEC updated time.
+                      Zone DNSSEC updated time.
+                    type: string
+                  zoneId:
+                    description: |-
+                      (String) The zone identifier to target for the resource. Modifying this attribute will force creation of a new resource.
+                      The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+                    type: string
+                  zoneIdSelector:
+                    description: Selector for a Zone in zone to populate zoneId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
                 type: object
               initProvider:
                 description: |-
@@ -97,14 +171,90 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  triggers:
-                    additionalProperties:
-                      type: string
-                    description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
+                  id:
+                    description: Reference to a Zone in zone to populate zoneId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
                     type: object
-                    x-kubernetes-map-type: granular
+                  modifiedOn:
+                    description: |-
+                      (String) Zone DNSSEC updated time.
+                      Zone DNSSEC updated time.
+                    type: string
+                  zoneId:
+                    description: |-
+                      (String) The zone identifier to target for the resource. Modifying this attribute will force creation of a new resource.
+                      The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+                    type: string
+                  zoneIdSelector:
+                    description: Selector for a Zone in zone to populate zoneId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
                 type: object
               managementPolicies:
                 default:
@@ -274,22 +424,73 @@ spec:
             - forProvider
             type: object
           status:
-            description: ResourceStatus defines the observed state of Resource.
+            description: DNSSECStatus defines the observed state of DNSSEC.
             properties:
               atProvider:
                 properties:
-                  id:
-                    description: (String) This is set to a random value at create
-                      time.
-                    type: string
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  algorithm:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      (String) Zone DNSSEC algorithm.
+                      Zone DNSSEC algorithm.
+                    type: string
+                  digest:
+                    description: |-
+                      (String) Zone DNSSEC digest.
+                      Zone DNSSEC digest.
+                    type: string
+                  digestAlgorithm:
+                    description: |-
+                      (String) Digest algorithm use for Zone DNSSEC.
+                      Digest algorithm use for Zone DNSSEC.
+                    type: string
+                  digestType:
+                    description: |-
+                      (String) Digest Type for Zone DNSSEC.
+                      Digest Type for Zone DNSSEC.
+                    type: string
+                  ds:
+                    description: |-
+                      (String) DS for the Zone DNSSEC.
+                      DS for the Zone DNSSEC.
+                    type: string
+                  flags:
+                    description: |-
+                      (Number) Zone DNSSEC flags.
+                      Zone DNSSEC flags.
+                    type: number
+                  id:
+                    description: (String) The ID of this resource.
+                    type: string
+                  keyTag:
+                    description: |-
+                      (Number) Key Tag for the Zone DNSSEC.
+                      Key Tag for the Zone DNSSEC.
+                    type: number
+                  keyType:
+                    description: |-
+                      (String) Key type used for Zone DNSSEC.
+                      Key type used for Zone DNSSEC.
+                    type: string
+                  modifiedOn:
+                    description: |-
+                      (String) Zone DNSSEC updated time.
+                      Zone DNSSEC updated time.
+                    type: string
+                  publicKey:
+                    description: |-
+                      (String) Public Key for the Zone DNSSEC.
+                      Public Key for the Zone DNSSEC.
+                    type: string
+                  status:
+                    description: |-
+                      (String) The status of the Zone DNSSEC.
+                      The status of the Zone DNSSEC.
+                    type: string
+                  zoneId:
+                    description: |-
+                      (String) The zone identifier to target for the resource. Modifying this attribute will force creation of a new resource.
+                      The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

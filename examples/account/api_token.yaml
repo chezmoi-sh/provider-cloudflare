@@ -1,0 +1,27 @@
+---
+apiVersion: account.cloudflare.crossplane.io/v1alpha1
+kind: APIToken
+metadata:
+  name: example
+  annotations:
+    uptest.upbound.io/example-id: example
+    uptest.upbound.io/post-assert-hook: ../../cluster/test/post-assert-hooks/account.api-token.sh
+spec:
+  forProvider:
+    accountIdSelector:
+      name: example
+    condition:
+      - requestIp:
+          - in: [1.1.1.1/32]
+    name: E2E provider-cloudflare API Token (example)
+    expiresOn: 2100-01-01T00:00:00Z
+    policy:
+      - effect: allow
+        permissionGroups:
+          - c8fed203ed3043cba015a93ad1616f1f # Zone: Read
+          - 4755a26eedb94da69e1066d98aa820be # DNS: Edit
+        resources:
+          com.cloudflare.api.account.zone.${data.cloudflare_zone_id}: "*"
+  writeConnectionSecretToRef:
+    name: cloudflare-api-token-example
+    namespace: default

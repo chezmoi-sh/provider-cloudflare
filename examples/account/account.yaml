@@ -1,0 +1,12 @@
+---
+apiVersion: account.cloudflare.crossplane.io/v1alpha1
+kind: Account
+metadata:
+  name: example
+  annotations:
+    crossplane.io/external-name: ${data.cloudflare_account_id}
+    uptest.upbound.io/conditions: Ready,Synced
+    uptest.upbound.io/example-id: example
+spec:
+  managementPolicies: [Observe]
+  forProvider: {}

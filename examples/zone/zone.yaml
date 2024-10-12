@@ -1,0 +1,15 @@
+---
+apiVersion: zone.cloudflare.crossplane.io/v1alpha1
+kind: Zone
+metadata:
+  name: example
+  annotations:
+    crossplane.io/external-name: ${data.cloudflare_zone_id}
+    uptest.upbound.io/conditions: Ready,Synced
+    uptest.upbound.io/example-id: example
+spec:
+  managementPolicies: [Observe]
+  forProvider:
+    accountIdSelector:
+      name: example
+    zone: ${data.cloudflare_zone}

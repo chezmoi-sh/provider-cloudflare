@@ -1,0 +1,14 @@
+# This direnv configuration file is used to set environment variables that will be used
+# in the e2e tests.
+
+export KUBECONFIG=".direnv/kubeconfig"
+
+export UPTEST_EXAMPLE_LIST="$(find examples/*/* -name '*.yaml' | grep -vE 'providerconfig|storeconfig' | paste -sd ',')"
+export UPTEST_CLOUD_CREDENTIALS="{\"email\": \"<YOUR_CF_EMAIL>\",\"api_key\": \"YOUR)CF_GLOBAL_KEY\"}"
+# NOTE: don't forget to create this datasource.yaml file with following content:
+# ```yaml
+# cloudflare_account_id: <YOUR_CLOUDFLARE_ACCOUNT_ID>
+# cloudflare_zone: <YOUR_CLOUDFLARE_ZONE_NAME>
+# cloudflare_zone_id: <YOUR_CLOUDFLARE_ZONE_ID>
+#```
+export UPTEST_DATASOURCE_PATH=".direnv/uptest/datasource.yaml"

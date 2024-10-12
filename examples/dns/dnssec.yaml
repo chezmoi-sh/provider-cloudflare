@@ -1,0 +1,11 @@
+---
+apiVersion: dns.cloudflare.crossplane.io/v1alpha1
+kind: DNSSEC
+metadata:
+  name: example
+  annotations:
+    uptest.upbound.io/example-id: example
+spec:
+  forProvider:
+    zoneIdSelector:
+      name: example

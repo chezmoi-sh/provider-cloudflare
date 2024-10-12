@@ -1,0 +1,17 @@
+---
+apiVersion: dns.cloudflare.crossplane.io/v1alpha1
+kind: Record
+metadata:
+  name: example
+  annotations:
+    uptest.upbound.io/example-id: example
+    uptest.upbound.io/post-assert-hook: ../../cluster/test/post-assert-hooks/dns.record.sh
+spec:
+  forProvider:
+    name: e2e.uptest
+    comment: E2E provider-cloudflare DNS Record (example)
+    content: Hello, World from Uptest!
+    type: TXT
+    proxied: false
+    zoneIdSelector:
+      name: example

@@ -9,3 +9,7 @@ cover.out
 # ignore IDE folders
 .vscode/
 .idea/
+
+# ignore e2e related files
+.direnv/
+e2e.envrc

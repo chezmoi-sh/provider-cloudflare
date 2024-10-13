@@ -146,7 +146,7 @@ deprecated:
 # │                           NOT SUPPORTED RESOURCES                          │
 # │                                                                            │
 # │       The following resources are not supported by the provider and        │
-# │                             WILL NOT be managed.                           │
+# │                               ARE NOT managed.                             │
 # └────────────────────────────────────────────────────────────────────────────┘
 not_supported:
   - cloudflare_access_rule

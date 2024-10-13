@@ -239,15 +239,30 @@ schema-version-diff:
 
 $(PROJECT_NAME): $(PROJECT_NAME).generate generate build
 
-$(PROJECT_NAME).generate:
+$(PROJECT_NAME).generate: $(YQ)
 	@$(INFO) Generating Cloudflare resource definitions for v$(TERRAFORM_PROVIDER_VERSION)
-	@yq $(PROJECT_NAME).resources.yaml --output-format json \
+	@$(YQ) $(PROJECT_NAME).resources.yaml --output-format json \
 		| go run ./scripts/generate_provider_config.go -version $(TERRAFORM_PROVIDER_VERSION) -package $(TERRAFORM_PROVIDER_REPO)
+
+$(PROJECT_NAME).reference_matrix: $(YQ)
+	@$(INFO) Generating Cloudflare reference matrix for v$(TERRAFORM_PROVIDER_VERSION)
+	@echo >&2 "| Status | API Group | Kind | Terraform Equivalent |"
+	@echo >&2 "|--------|-----------|------|----------------------|"
+	@$(YQ) provider-cloudflare.resources.yaml -o json \
+		| jq '.supported | to_entries[] | .key as $$group | .value | to_entries[] | "|:white_check_mark:|\($$group).cloudflare.crossplane.io|\(.value.kind)|\(.key)|"' --raw-output \
+		| sort >&2
+	@$(YQ) provider-cloudflare.resources.yaml -o json \
+		| jq '.not_supported[] | "|:black_square_button:|||\(.)|"' --raw-output \
+		| sort >&2
+	@$(YQ) provider-cloudflare.resources.yaml -o json \
+		| jq '.deprecated[] | "|:no_entry_sign:|||\(.)|"' --raw-output \
+		| sort >&2
 
 define PROVIDER_MAKE_HELP
 
 $(PROJECT_NAME) Targets:
-    $(PROJECT_NAME).generate   Generate $(PROJECT_NAME) resource definitions for v$(TERRAFORM_PROVIDER_VERSION)
+    $(PROJECT_NAME).generate           Generate $(PROJECT_NAME) resource definitions for v$(TERRAFORM_PROVIDER_VERSION)
+	$(PROJECT_NAME).reference_matrix   Generate $(PROJECT_NAME) reference matrix for v$(TERRAFORM_PROVIDER_VERSION)
 
 endef
 export PROVIDER_MAKE_HELP
